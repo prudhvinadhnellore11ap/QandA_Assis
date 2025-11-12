@@ -4,6 +4,8 @@ from langchain_openai import AzureChatOpenAI, AzureOpenAIEmbeddings
 from langchain_community.vectorstores.azuresearch import AzureSearch
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
+from langchain_openai.embeddings import AzureOpenAIEmbeddings
+
 # ---------------------------
 # Load environment variables
 # ---------------------------
@@ -13,16 +15,26 @@ load_dotenv()
 # Initialize Embeddings
 # ---------------------------
 # ---------------------------
-# Initialize Embeddings
+# Fixed Embedding Class for Render (handles proxies safely)
 # ---------------------------
-from langchain_openai.embeddings import AzureOpenAIEmbeddings
-
 class FixedAzureOpenAIEmbeddings(AzureOpenAIEmbeddings):
-    """Patch for environments that reject unexpected kwargs like 'proxies'."""
+    """A robust patch for Render/Cloud where Azure client rejects 'proxies' kwarg."""
     def __init__(self, **kwargs):
-        kwargs.pop("proxies", None)
+        # Strip unwanted args that cause issues
+        for bad_key in ["proxies", "proxy", "session"]:
+            kwargs.pop(bad_key, None)
         super().__init__(**kwargs)
 
+    def _invocation_params(self, **kwargs):
+        # Ensure we don't reintroduce problematic args later
+        for bad_key in ["proxies", "proxy", "session"]:
+            kwargs.pop(bad_key, None)
+        return super()._invocation_params(**kwargs)
+
+
+# ---------------------------
+# Initialize Embeddings
+# ---------------------------
 embeddings = FixedAzureOpenAIEmbeddings(
     deployment=os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT"),
     model="text-embedding-3-small",
@@ -30,6 +42,7 @@ embeddings = FixedAzureOpenAIEmbeddings(
     azure_endpoint=os.getenv("AZURE_OPENAI_EMB_ENDPOINT"),
     api_version=os.getenv("AZURE_OPENAI_EMB_API_VERSION", "2024-12-01-preview"),
 )
+
 
 
 # ---------------------------
