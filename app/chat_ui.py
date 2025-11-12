@@ -4,7 +4,7 @@ import streamlit as st
 # -------------------------------
 # FastAPI backend endpoint
 # -------------------------------
-API_URL = "http://127.0.0.1:8000/ask"
+API_URL = "https://qanda-assis.onrender.com/ask"
 
 st.set_page_config(page_title="PruQandA Chat", page_icon="💬", layout="centered")
 
