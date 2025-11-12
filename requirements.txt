@@ -13,12 +13,7 @@ azure-core==1.30.0
 azure-search-documents==11.6.0
 
 # ------------------------
-# OpenAI SDK (stable, proxy-safe)
-# ------------------------
-openai==1.30.1   # ✅ safest version for Azure + Render
-
-# ------------------------
-# LangChain (optional; can remove if not used)
+# LangChain (installed first)
 # ------------------------
 langchain==0.2.10
 langchain-openai==0.1.8
@@ -35,3 +30,8 @@ streamlit==1.40.0
 tqdm==4.66.5
 numpy==1.26.4
 pandas==2.2.3
+
+# ------------------------
+# ✅ Force OpenAI last (this overrides any LangChain upgrade)
+# ------------------------
+openai==1.30.1
