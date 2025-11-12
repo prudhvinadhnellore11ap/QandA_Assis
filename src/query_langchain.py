@@ -1,26 +1,6 @@
 import os
 from dotenv import load_dotenv
-
-# ===============================================================
-# 🔧 Render-safe patch for AzureOpenAIEmbeddings ("proxies" bug)
-# ===============================================================
-from langchain_openai.embeddings import AzureOpenAIEmbeddings as _AzureEmb
-
-class AzureEmbeddingsPatched(_AzureEmb):
-    """Ignore unsupported kwargs like proxies/session in cloud envs."""
-    def __init__(self, *args, **kwargs):
-        for bad in ("proxies", "proxy", "session"):
-            kwargs.pop(bad, None)
-        super().__init__(*args, **kwargs)
-
-# Replace the original class globally
-import langchain_openai.embeddings as _emb_mod
-_emb_mod.AzureOpenAIEmbeddings = AzureEmbeddingsPatched
-
-# ===============================================================
-# Imports (normal)
-# ===============================================================
-from langchain_openai import AzureChatOpenAI
+from langchain_openai import AzureChatOpenAI, AzureOpenAIEmbeddings
 from langchain_community.vectorstores.azuresearch import AzureSearch
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
@@ -31,12 +11,11 @@ from langchain.prompts import PromptTemplate
 load_dotenv()
 
 # -------------------- Embeddings --------------------
-embeddings = AzureEmbeddingsPatched(
-    deployment=os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT"),
-    model="text-embedding-3-small",
-    api_key=os.getenv("AZURE_OPENAI_EMB_KEY"),
+embeddings = AzureOpenAIEmbeddings(
+    azure_deployment=os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT"),
+    openai_api_key=os.getenv("AZURE_OPENAI_EMB_KEY"),
     azure_endpoint=os.getenv("AZURE_OPENAI_EMB_ENDPOINT"),
-    api_version=os.getenv("AZURE_OPENAI_EMB_API_VERSION", "2024-12-01-preview"),
+    openai_api_version=os.getenv("AZURE_OPENAI_EMB_API_VERSION", "2024-12-01-preview"),
 )
 
 # -------------------- Azure Search --------------------
@@ -59,10 +38,10 @@ retriever.k = 40
 
 # -------------------- Chat Model --------------------
 llm = AzureChatOpenAI(
-    deployment_name=os.getenv("AZURE_OPENAI_CHAT_MODEL"),
+    azure_deployment=os.getenv("AZURE_OPENAI_CHAT_MODEL"),
     azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-    api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-    api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2024-12-01-preview"),
+    openai_api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+    openai_api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2024-12-01-preview"),
     temperature=0.2,
 )
 
