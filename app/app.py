@@ -10,17 +10,16 @@ from pydantic import BaseModel
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(ROOT_DIR)
 
-try:
-    from src.query_langchain import qa_chain  # reuse your existing chain setup
-except Exception as e:
-    print(f"⚠️ Could not import qa_chain: {e}")
-    qa_chain = None
+# -------------------------------------
+# Import the simplified direct RAG function
+# -------------------------------------
+from src.query_direct import run_rag_query
 
 # -------------------------------------
 # FastAPI setup
 # -------------------------------------
 load_dotenv()
-app = FastAPI(title="PruQandA RAG API", version="1.0")
+app = FastAPI(title="PruQandA RAG API", version="2.0")
 
 # -------------------------------------
 # Models
@@ -40,20 +39,15 @@ async def home():
 
 @app.post("/ask", response_model=QueryResponse)
 async def ask_question(request: QueryRequest):
-    """Run LangChain RAG query and return only the answer."""
+    """Run direct RAG query using Azure Search + Azure OpenAI."""
     query = request.question.strip()
     try:
-        if not qa_chain:
-            return QueryResponse(answer="❌ QA chain not loaded.")
-
-        result = qa_chain.invoke({"query": query})
-        answer = result.get("result", "No answer generated.")
+        answer = run_rag_query(query)
         return QueryResponse(answer=answer)
-
     except Exception as e:
         return QueryResponse(answer=f"❌ Error: {str(e)}")
 
 # -------------------------------------
-# Run from project root:
+# Run locally:
 # uvicorn app.app:app --reload
 # -------------------------------------
