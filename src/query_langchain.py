@@ -12,13 +12,25 @@ load_dotenv()
 # ---------------------------
 # Initialize Embeddings
 # ---------------------------
-embeddings = AzureOpenAIEmbeddings(
+# ---------------------------
+# Initialize Embeddings
+# ---------------------------
+from langchain_openai.embeddings import AzureOpenAIEmbeddings
+
+class FixedAzureOpenAIEmbeddings(AzureOpenAIEmbeddings):
+    """Patch for environments that reject unexpected kwargs like 'proxies'."""
+    def __init__(self, **kwargs):
+        kwargs.pop("proxies", None)
+        super().__init__(**kwargs)
+
+embeddings = FixedAzureOpenAIEmbeddings(
     deployment=os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT"),
-    model="text-embedding-3-small",  # must match your Azure embedding deployment
+    model="text-embedding-3-small",
     api_key=os.getenv("AZURE_OPENAI_EMB_KEY"),
     azure_endpoint=os.getenv("AZURE_OPENAI_EMB_ENDPOINT"),
-    api_version=os.getenv("AZURE_OPENAI_EMB_API_VERSION", "2024-12-01-preview")
+    api_version=os.getenv("AZURE_OPENAI_EMB_API_VERSION", "2024-12-01-preview"),
 )
+
 
 # ---------------------------
 # Connect to Azure Cognitive Search
