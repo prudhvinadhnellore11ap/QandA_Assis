@@ -1,0 +1,24 @@
+# Core server
+fastapi==0.115.0
+uvicorn==0.30.3
+
+# Environment + utilities
+python-dotenv==1.0.1
+requests==2.31.0
+tqdm==4.66.5
+numpy==1.26.4
+
+# Azure SDKs
+azure-core==1.30.0
+azure-search-documents==11.6.0
+
+# OpenAI + Azure OpenAI
+openai==1.52.0
+
+# LangChain ecosystem
+langchain==0.2.14
+langchain-openai==0.1.14
+langchain-community==0.2.12
+
+# Optional (nice to have for debugging / notebooks)
+pandas==2.2.3

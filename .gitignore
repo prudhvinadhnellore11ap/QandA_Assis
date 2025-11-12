@@ -1,0 +1,86 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+.Python
+.venv/
+env/
+venv/
+ENV/
+build/
+dist/
+pip-wheel-metadata/
+
+# ---- Virtual environments ----
+*.env
+.env
+.env.*
+*.venv
+.venv/
+venv.bak/
+env.bak/
+
+# ---- IDE / Editor ----
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ---- OS files ----
+.DS_Store
+Thumbs.db
+
+# ---- Logs / caches ----
+*.log
+*.out
+*.pid
+*.bak
+*.swp
+.cache/
+.pytest_cache/
+__pycache__/
+celerybeat-schedule
+coverage/
+htmlcov/
+pytestdebug.log
+
+# ---- Azure / Cloud configs ----
+*.json
+*.yaml
+*.yml
+!requirements*.txt  # keep dependency lists
+
+# ---- Data / Outputs ----
+data/
+output/
+uploads/
+*.csv
+*.xlsx
+*.parquet
+*.db
+rest.py
+setup.txt
+
+# ---- FastAPI / Streamlit ----
+*.db.sqlite3
+*.sqlite
+.streamlit/
+*.tfrecord
+
+# ---- Credentials / Keys ----
+.env
+*.pem
+*.key
+*.crt
+*.p12
+*.bak
+secrets.json
+
+# ---- Misc ----
+tmp/
+temp/
+logs/
